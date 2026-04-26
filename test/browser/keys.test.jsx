@@ -1,4 +1,4 @@
-import { createElement, Component, render, createRef } from 'preact';
+import { createElement, Component, render, createRef, createContext, Fragment } from 'preact';
 import { setupRerender } from 'preact/test-utils';
 import { setupScratch, teardown } from '../_util/helpers';
 import { logCall, clearLog, getLog } from '../_util/logCall';
@@ -1150,5 +1150,38 @@ describe('keys', () => {
 			'<li>.appendChild(#text)',
 			'<ol>2345.appendChild(<li>6)'
 		]);
+	});
+
+	// Issue #5065
+	it('should maintain correct DOM order with conditional ContextProvider and inner keys', () => {
+		const Ctx = createContext(null);
+
+		function Item({ id }) {
+			return <div>{id}</div>;
+		}
+
+		function App({ showProvider }) {
+			const items = (
+				<Fragment>
+					<Item key="a" id="a" />
+					<Item key="b" id="b" />
+					<Item key="c" id="c" />
+				</Fragment>
+			);
+			return showProvider ? (
+				<Ctx.Provider value={null}>{items}</Ctx.Provider>
+			) : (
+				items
+			);
+		}
+
+		render(<App showProvider={false} />, scratch);
+		expect(scratch.textContent).to.equal('abc');
+
+		render(<App showProvider={true} />, scratch);
+		expect(scratch.textContent).to.equal('abc');
+
+		render(<App showProvider={false} />, scratch);
+		expect(scratch.textContent).to.equal('abc');
 	});
 });
