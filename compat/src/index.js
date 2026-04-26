@@ -75,11 +75,7 @@ function isFragment(element) {
  * @returns {boolean}
  */
 function isMemo(element) {
-	return (
-		!!element &&
-		typeof element.displayName == 'string' &&
-		element.displayName.startsWith('Memo(')
-	);
+	return !!element && !!element.type && element._forwarded;
 }
 
 /**

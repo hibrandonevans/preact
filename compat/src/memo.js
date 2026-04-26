@@ -16,11 +16,9 @@ export function memo(c, comparer) {
 			ref.call ? ref(null) : (ref.current = null);
 		}
 
-		if (!comparer) {
-			return shallowDiffers(this.props, nextProps);
-		}
-
-		return !comparer(this.props, nextProps) || !updateRef;
+		return !comparer
+			? shallowDiffers(this.props, nextProps)
+			: !comparer(this.props, nextProps) || !updateRef;
 	}
 
 	function Memoed(props) {

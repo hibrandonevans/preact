@@ -45,7 +45,7 @@ const onChangeInputType = type =>
 	).test(type);
 
 // Some libraries like `react-virtualized` explicitly check for this.
-Component.prototype.isReactComponent = {};
+Component.prototype.isReactComponent = true;
 
 // `UNSAFE_*` lifecycle hooks
 // Preact only ever invokes the unprefixed methods.

@@ -27,17 +27,14 @@ const oldUnmount = options.unmount;
 options.unmount = function (vnode) {
 	/** @type {import('./internal').Component} */
 	const component = vnode._component;
-	if (component) component._unmounted = true;
-	if (component && component._onResolve) {
-		component._onResolve();
-	}
-
-	// if the component is still hydrating
-	// most likely it is because the component is suspended
-	// we set the vnode.type as `null` so that it is not a typeof function
-	// so the unmount will remove the vnode._dom
-	if (component && vnode._flags & MODE_HYDRATE) {
-		vnode.type = null;
+	if (component) {
+		component._unmounted = true;
+		if (component._onResolve) component._onResolve();
+		// if the component is still hydrating
+		// most likely it is because the component is suspended
+		// we set the vnode.type as `null` so that it is not a typeof function
+		// so the unmount will remove the vnode._dom
+		if (vnode._flags & MODE_HYDRATE) vnode.type = null;
 	}
 
 	if (oldUnmount) oldUnmount(vnode);
