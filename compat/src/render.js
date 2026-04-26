@@ -254,18 +254,14 @@ options.vnode = vnode => {
 let currentComponent;
 const oldBeforeRender = options._render;
 options._render = function (vnode) {
-	if (oldBeforeRender) {
-		oldBeforeRender(vnode);
-	}
+	if (oldBeforeRender) oldBeforeRender(vnode);
 	currentComponent = vnode._component;
 };
 
 const oldDiffed = options.diffed;
 /** @type {(vnode: import('./internal').VNode) => void} */
 options.diffed = function (vnode) {
-	if (oldDiffed) {
-		oldDiffed(vnode);
-	}
+	if (oldDiffed) oldDiffed(vnode);
 
 	const props = vnode.props;
 	const dom = vnode._dom;

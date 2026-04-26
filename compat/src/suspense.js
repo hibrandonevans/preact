@@ -27,9 +27,9 @@ const oldUnmount = options.unmount;
 options.unmount = function (vnode) {
 	/** @type {import('./internal').Component} */
 	const component = vnode._component;
-	if (component) component._unmounted = true;
-	if (component && component._onResolve) {
-		component._onResolve();
+	if (component) {
+		component._unmounted = true;
+		if (component._onResolve) component._onResolve();
 	}
 
 	// if the component is still hydrating
@@ -262,9 +262,7 @@ export function lazy(loader) {
 			prom = loader();
 			prom.then(
 				exports => {
-					if (exports) {
-						component = exports.default || exports;
-					}
+					component = exports && (exports.default || exports);
 					resolved = true;
 				},
 				e => {
@@ -274,15 +272,10 @@ export function lazy(loader) {
 			);
 		}
 
-		if (error) {
-			throw error;
-		}
+		if (error) throw error;
+		if (!resolved) throw prom;
 
-		if (!resolved) {
-			throw prom;
-		}
-
-		return component ? createElement(component, props) : null;
+		return component && createElement(component, props);
 	}
 
 	Lazy.displayName = 'Lazy';
