@@ -449,11 +449,12 @@ function flushAfterPaintEffects() {
 	while ((component = afterPaintEffects.shift())) {
 		if (!component._parentDom || !component.__hooks) continue;
 		try {
-			component.__hooks._pendingEffects.some(invokeCleanup);
-			component.__hooks._pendingEffects.some(invokeEffect);
-			component.__hooks._pendingEffects = [];
+			const hooks = component.__hooks;
+			hooks._pendingEffects.some(invokeCleanup);
+			hooks._pendingEffects.some(invokeEffect);
+			hooks._pendingEffects = [];
 		} catch (e) {
-			component.__hooks._pendingEffects = [];
+			if (component.__hooks) component.__hooks._pendingEffects = [];
 			options._catchError(e, component._vnode);
 		}
 	}

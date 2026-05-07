@@ -636,4 +636,23 @@ describe('useEffect', () => {
 		expect(calls.length).to.equal(1);
 		expect(calls).to.deep.equal(['doing effecthi']);
 	});
+
+	it('should not crash when an effect unmounts its own tree', async () => {
+		teardownAct();
+
+		const container = document.createElement('div');
+		document.body.appendChild(container);
+
+		function App() {
+			useEffect(() => {
+				render(null, container);
+			}, []);
+			return <div>app</div>;
+		}
+
+		render(<App />, container);
+
+		await new Promise(resolve => setTimeout(resolve, 100));
+		document.body.removeChild(container);
+	});
 });
